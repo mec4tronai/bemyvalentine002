@@ -46,7 +46,6 @@ input {
   font-size: 1rem;
   margin: 1rem 0 1.2rem;
   background: rgba(255,255,255,0.95);
-  box-shadow: 0 0 0 rgba(255,77,109,0.6);
   transition: box-shadow 0.3s ease, transform 0.2s ease;
 }
 
@@ -62,11 +61,11 @@ button {
   border-radius: 999px;
   font-size: 1rem;
   cursor: pointer;
-  transition: all 0.3s ease;
   font-weight: 600;
+  transition: all 0.3s ease;
 }
 
-/* Continue + Yes (same vibe) */
+/* Continue + Yes */
 #startBtn,
 #yesBtn {
   background: #ff4d6d;
@@ -94,7 +93,7 @@ button {
   100% { transform: scale(1); }
 }
 
-/* Hearts floating UP */
+/* Hearts */
 .heart {
   position: absolute;
   bottom: -30px;
