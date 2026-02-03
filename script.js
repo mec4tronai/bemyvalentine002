@@ -6,7 +6,20 @@ let userName = "You";
 let musicUnlocked = false;
 let noCount = 0;
 
-/* Sounds */
+/* Typing utility */
+function typeText(el, text, speed = 60, cb) {
+  el.textContent = "";
+  let i = 0;
+  const timer = setInterval(() => {
+    el.textContent += text.charAt(i++);
+    if (i >= text.length) {
+      clearInterval(timer);
+      if (cb) cb();
+    }
+  }, speed);
+}
+
+/* Sound */
 function playClick() {
   clickSound.currentTime = 0;
   clickSound.play().catch(()=>{});
@@ -32,21 +45,36 @@ document.getElementById("startBtn").onclick = () => {
   showQuestion();
 };
 
-/* Question */
+/* Question screen */
 function showQuestion() {
   container.classList.add("fade-out");
+
   setTimeout(() => {
     container.innerHTML = `
       <h1>${userName} 💖</h1>
-      <p>Will you be my Valentine?</p>
 
-      <div class="buttons">
+      <p style="opacity:0.9">
+        I’ve been wanting to ask you something too 💖
+      </p>
+
+      <p id="valentineText"
+         style="font-size:1.1rem; font-weight:600; min-height:1.6rem"></p>
+
+      <div class="buttons" id="choiceButtons" style="opacity:0">
         <button id="yesBtn">Yes ❤️</button>
         <button id="noBtn">No 🙃</button>
       </div>
     `;
     container.classList.remove("fade-out");
-    setupButtons();
+
+    const valText = document.getElementById("valentineText");
+    const buttons = document.getElementById("choiceButtons");
+
+    typeText(valText, "Will you be my Valentine?", 70, () => {
+      buttons.style.opacity = 1;
+      setupButtons();
+    });
+
   }, 700);
 }
 
@@ -64,52 +92,64 @@ function setupButtons() {
   noBtn.onmouseenter = noBtn.ontouchstart = () => {
     playClick();
     noCount++;
-    const r = Math.min(150, 40 + noCount * 20);
+    const r = Math.min(160, 40 + noCount * 20);
     noBtn.style.transform =
       `translate(${Math.random()*r-r/2}px, ${Math.random()*r-r/2}px)`;
   };
 }
 
-/* WIN */
+/* Win screen */
 function win() {
   container.classList.add("fade-out");
+
   setTimeout(() => {
     container.innerHTML = `
-      <h1>YAYYYY!! 🎉🥹</h1>
-      <p>
-        ${userName}, you’re officially<br>
-        <strong>my Valentine ❤️</strong><br><br>
-        This just made my heart so happy 💕
-      </p>
+      <h1 id="yayText"></h1>
+      <p id="finalText" style="min-height:4.8rem"></p>
     `;
     container.classList.remove("fade-out");
-    if (musicUnlocked) bgMusic.play();
-    blastCelebration();
+
+    const yay = document.getElementById("yayText");
+    const finalText = document.getElementById("finalText");
+
+    typeText(yay, "YAYYYY!! 🎉🥹", 80, () => {
+      typeText(
+        finalText,
+        `${userName}, you’re officially my Valentine ❤️\n\nThis just made my heart so happy 💕`,
+        45,
+        () => {
+          if (musicUnlocked) bgMusic.play();
+          blastCelebration();
+        }
+      );
+    });
   }, 700);
 }
 
 /* Celebration */
 function blastCelebration() {
-  // Heart explosion
-  for (let i = 0; i < 30; i++) {
-    spawnHeart(true);
-  }
-  // Confetti rain
+  for (let i = 0; i < 40; i++) spawnHeart(true);
   setInterval(spawnConfetti, 150);
 }
 
-/* Continuous hearts */
+/* Hearts */
 function spawnHeart(blast = false) {
   const h = document.createElement("div");
   h.className = "heart";
-  h.textContent = "❤️";
+  h.textContent = Math.random() > 0.2 ? "❤️" : "💖";
   h.style.left = Math.random() * 100 + "vw";
-  h.style.animationDuration = (blast ? 3 : 5 + Math.random() * 3) + "s";
+  h.style.animationDuration =
+    (blast ? 3 : 4 + Math.random() * 3) + "s";
   document.body.appendChild(h);
   setTimeout(() => h.remove(), 8000);
 }
 
-setInterval(() => spawnHeart(), 400);
+/* Continuous hearts */
+setInterval(() => {
+  spawnHeart();
+  if (Math.random() > 0.5) spawnHeart();
+  if (Math.random() > 0.8) spawnHeart();
+}, 220);
 
 /* Confetti */
 function spawnConfetti() {
